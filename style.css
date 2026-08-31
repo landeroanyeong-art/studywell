@@ -1,0 +1,166 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background-color: #050505;
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  cursor: grab;
+  user-select: none;
+  font-family: "Arial", sans-serif;
+}
+
+body:active {
+  cursor: grabbing;
+}
+
+/* Starry Canvas Background */
+#starCanvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* Music Button */
+#musicBtn {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 100;
+  background: rgba(255, 105, 180, 0.2);
+  border: 1px solid #ff69b4;
+  color: #fff;
+  padding: 10px 18px;
+  border-radius: 20px;
+  cursor: pointer;
+  backdrop-filter: blur(5px);
+  font-weight: bold;
+  transition: all 0.3s ease;
+}
+
+#musicBtn:hover {
+  background: #ff69b4;
+  box-shadow: 0 0 15px #ff69b4;
+}
+
+#viewport {
+  perspective: 1000px;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+  z-index: 10;
+  padding: 40px 0;
+}
+
+#ui {
+  position: absolute;
+  top: 40%;
+  left: 50%;
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+
+#ui .love_word {
+  position: absolute;
+  color: #ff69b4;
+  font-size: 0.85rem;
+  font-family: "Courier New", Monaco, monospace;
+  font-weight: bold;
+
+  text-shadow:
+    0 0 5px rgba(255, 105, 180, 0.9),
+    -1px -1px 0 #000,
+    1px -1px 0 #000,
+    -1px 1px 0 #000,
+    1px 1px 0 #000;
+
+  letter-spacing: 1px;
+  white-space: nowrap;
+  transform-style: preserve-3d;
+  backface-visibility: visible;
+
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Name & Subtitle Positioned Below Heart */
+.main-name-container {
+  position: absolute;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  pointer-events: none;
+  text-align: center;
+  width: 100%;
+}
+
+.love-subtitle {
+  color: #ffb6c1;
+  font-size: 1.2rem;
+  font-style: italic;
+  letter-spacing: 2px;
+  margin-bottom: 8px;
+  text-shadow: 0 0 8px rgba(255, 182, 193, 0.6);
+}
+
+#editableName {
+  color: #ffffff;
+  font-size: 3.5rem;
+  text-transform: uppercase;
+  font-weight: 900;
+  letter-spacing: 6px;
+
+  text-shadow:
+    0 0 10px #ff69b4,
+    0 0 20px #ff69b4,
+    0 0 40px #ff1493;
+}
+
+/* Falling Flowers Container */
+.flower-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.falling-flower {
+  position: absolute;
+  opacity: 0.85;
+  animation: fall linear infinite;
+  will-change: transform;
+  user-select: none;
+}
+
+@keyframes fall {
+  0% {
+    transform: translateY(-50px) rotate(0deg) translateX(0px);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.9;
+  }
+  100% {
+    transform: translateY(105vh) rotate(360deg) translateX(80px);
+    opacity: 0;
+  }
+}
