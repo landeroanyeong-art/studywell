@@ -1,20 +1,20 @@
-const ui = document.getElementById("ui");
-const flowerContainer = document.getElementById("flowerContainer");
-const editableName = document.getElementById("editableName");
-const editableSubtitle = document.getElementById("editableSubtitle");
-const musicBtn = document.getElementById("musicBtn");
-const bgMusic = document.getElementById("bgMusic");
+const ui = document.getElementById('ui');
+const flowerContainer = document.getElementById('flowerContainer');
+const editableName = document.getElementById('editableName');
+const editableSubtitle = document.getElementById('editableSubtitle');
+const musicBtn = document.getElementById('musicBtn');
+const bgMusic = document.getElementById('bgMusic');
 
 // --- TEXT CONTENT ---
-editableName.textContent = "FAITH GRACE";
+editableName.textContent = "FAITH GRACE"; 
 editableSubtitle.textContent = "Study Well My Love.";
 
 // --- 1. STARRY BACKGROUND CANVAS ---
-const starCanvas = document.getElementById("starCanvas");
-const ctx = starCanvas.getContext("2d");
+const starCanvas = document.getElementById('starCanvas');
+const ctx = starCanvas.getContext('2d');
 
 let stars = [];
-const numStars = 150;
+const numStars = window.innerWidth < 600 ? 80 : 150; // Optimized star count for mobile screens
 
 function resizeCanvas() {
   starCanvas.width = window.innerWidth;
@@ -30,14 +30,14 @@ function initStars() {
       y: Math.random() * starCanvas.height,
       radius: Math.random() * 1.5 + 0.5,
       alpha: Math.random(),
-      twinkleSpeed: Math.random() * 0.02 + 0.005,
+      twinkleSpeed: Math.random() * 0.02 + 0.005
     });
   }
 }
 
 function drawStars() {
   ctx.clearRect(0, 0, starCanvas.width, starCanvas.height);
-
+  
   for (let star of stars) {
     star.alpha += star.twinkleSpeed;
     if (star.alpha > 1 || star.alpha < 0) {
@@ -51,18 +51,13 @@ function drawStars() {
   }
 }
 
-window.addEventListener("resize", resizeCanvas);
+window.addEventListener('resize', resizeCanvas);
 resizeCanvas();
 
 // --- 2. BUILD THE 3D HEART STRUCTURE ---
 function getHeartPosition(t) {
   const x = 16 * Math.pow(Math.sin(t), 3);
-  const y = -(
-    13 * Math.cos(t) -
-    5 * Math.cos(2 * t) -
-    2 * Math.cos(3 * t) -
-    Math.cos(4 * t)
-  );
+  const y = -(13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t));
   return { x, y };
 }
 
@@ -70,21 +65,24 @@ const layers = 12;
 const pointsPerLayer = 24;
 const depthSpacing = 12;
 
+// Scale heart size down slightly on mobile screens
+const heartScaleFactor = window.innerWidth < 600 ? 9.5 : 13;
+
 for (let layer = 0; layer < layers; layer++) {
   const depthFactor = (layer / (layers - 1)) * 2 - 1;
-  const z = depthFactor * ((layers * depthSpacing) / 2);
+  const z = depthFactor * (layers * depthSpacing / 2);
   const scale = Math.cos(depthFactor * (Math.PI / 2.5));
 
   for (let i = 0; i < pointsPerLayer; i++) {
     const t = (i / pointsPerLayer) * Math.PI * 2;
     const pos = getHeartPosition(t);
 
-    const x = pos.x * 13 * scale;
-    const y = pos.y * 13 * scale;
+    const x = pos.x * heartScaleFactor * scale;
+    const y = pos.y * heartScaleFactor * scale;
 
-    const span = document.createElement("span");
-    span.className = "love_word";
-    span.textContent = "i love you";
+    const span = document.createElement('span');
+    span.className = 'love_word';
+    span.textContent = 'i love you';
 
     span.style.transform = `translate3d(${x}px, ${y}px, ${z}px) rotateZ(${t}rad) rotateX(15deg)`;
     ui.appendChild(span);
@@ -92,100 +90,96 @@ for (let layer = 0; layer < layers; layer++) {
 }
 
 // --- 3. FALLING FLOWERS LOGIC ---
-const flowerIcons = ["🌸", "🌺", "🌷", "🌹", "🌼"];
+const flowerIcons = ['🌸', '🌺', '🌷', '🌹', '🌼'];
 
 function createFlower() {
-  const flower = document.createElement("div");
-  flower.className = "falling-flower";
-  flower.textContent =
-    flowerIcons[Math.floor(Math.random() * flowerIcons.length)];
+    const flower = document.createElement('div');
+    flower.className = 'falling-flower';
+    flower.textContent = flowerIcons[Math.floor(Math.random() * flowerIcons.length)];
+    
+    const fontSize = Math.random() * 1.2 + 0.8;
+    const startX = Math.random() * window.innerWidth;
+    const duration = Math.random() * 4 + 4;
+    const delay = Math.random() * 2;
+    
+    flower.style.fontSize = `${fontSize}rem`;
+    flower.style.left = `${startX}px`;
+    flower.style.animationDuration = `${duration}s`;
+    flower.style.animationDelay = `${delay}s`;
 
-  const fontSize = Math.random() * 1.5 + 1;
-  const startX = Math.random() * window.innerWidth;
-  const duration = Math.random() * 4 + 4;
-  const delay = Math.random() * 2;
-
-  flower.style.fontSize = `${fontSize}rem`;
-  flower.style.left = `${startX}px`;
-  flower.style.animationDuration = `${duration}s`;
-  flower.style.animationDelay = `${delay}s`;
-
-  flowerContainer.appendChild(flower);
-
-  setTimeout(
-    () => {
-      flower.remove();
-    },
-    (duration + delay) * 1000,
-  );
+    flowerContainer.appendChild(flower);
+    
+    setTimeout(() => {
+        flower.remove();
+    }, (duration + delay) * 1000);
 }
 
-setInterval(createFlower, 200);
+setInterval(createFlower, 250);
 
-// --- 4. ROBUST AUDIO PLAYER & FALLBACK SEARCH ---
-const audioSources = ["Blue.mp3", "blue.mp3", "Blue.m4a", "blue.m4a"];
+// --- 4. ROBUST AUDIO PLAYER FOR MOBILE ---
+const audioSources = ['Blue.mp3', 'blue.mp3', 'Blue.m4a', 'blue.m4a'];
 let currentAudioIndex = 0;
 
 function tryPlayAudio() {
-  bgMusic
-    .play()
-    .then(() => {
-      musicBtn.textContent = "⏸️ Pause Music";
-    })
-    .catch((err) => {
-      if (currentAudioIndex < audioSources.length - 1) {
-        currentAudioIndex++;
-        bgMusic.src = audioSources[currentAudioIndex];
-        bgMusic
-          .play()
-          .then(() => {
-            musicBtn.textContent = "⏸️ Pause Music";
-          })
-          .catch((e) => console.log("Trying next audio format..."));
-      } else {
-        alert("Please ensure 'Blue.mp3' is placed in your project folder!");
-      }
-    });
+  bgMusic.play().then(() => {
+    musicBtn.textContent = '⏸️ Pause Music';
+  }).catch((err) => {
+    if (currentAudioIndex < audioSources.length - 1) {
+      currentAudioIndex++;
+      bgMusic.src = audioSources[currentAudioIndex];
+      bgMusic.play().then(() => {
+        musicBtn.textContent = '⏸️ Pause Music';
+      }).catch(e => console.log("Trying next audio format..."));
+    } else {
+      alert("Please tap the screen or music button again to start playing.");
+    }
+  });
 }
 
-musicBtn.addEventListener("click", () => {
+musicBtn.addEventListener('click', (e) => {
+  e.stopPropagation();
   if (bgMusic.paused) {
     tryPlayAudio();
   } else {
     bgMusic.pause();
-    musicBtn.textContent = "🎵 Play Music";
+    musicBtn.textContent = '🎵 Play Music';
   }
 });
 
-// --- 5. CLICK-TO-BURST HEART PARTICLES ---
-window.addEventListener("click", (e) => {
-  if (e.target.tagName === "BUTTON") return;
+// --- 5. CLICK/TOUCH TO BURST HEART PARTICLES ---
+function handleBurst(e) {
+  if (e.target.tagName === 'BUTTON') return;
 
-  for (let i = 0; i < 8; i++) {
-    const heart = document.createElement("div");
-    heart.textContent = "💖";
-    heart.style.position = "fixed";
-    heart.style.left = `${e.clientX}px`;
-    heart.style.top = `${e.clientY}px`;
-    heart.style.fontSize = `${Math.random() * 1.2 + 0.8}rem`;
-    heart.style.pointerEvents = "none";
-    heart.style.zIndex = "100";
-    heart.style.transition = "all 1s ease-out";
+  const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+  const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+
+  for (let i = 0; i < 6; i++) {
+    const heart = document.createElement('div');
+    heart.textContent = '💖';
+    heart.style.position = 'fixed';
+    heart.style.left = `${clientX}px`;
+    heart.style.top = `${clientY}px`;
+    heart.style.fontSize = `${Math.random() * 1 + 0.7}rem`;
+    heart.style.pointerEvents = 'none';
+    heart.style.zIndex = '100';
+    heart.style.transition = 'all 0.8s ease-out';
 
     document.body.appendChild(heart);
 
     setTimeout(() => {
-      const offsetX = (Math.random() - 0.5) * 120;
-      const offsetY = -Math.random() * 120 - 40;
+      const offsetX = (Math.random() - 0.5) * 100;
+      const offsetY = -Math.random() * 100 - 30;
       heart.style.transform = `translate(${offsetX}px, ${offsetY}px) scale(0)`;
-      heart.style.opacity = "0";
+      heart.style.opacity = '0';
     }, 20);
 
-    setTimeout(() => heart.remove(), 1000);
+    setTimeout(() => heart.remove(), 800);
   }
-});
+}
 
-// --- 6. INTERACTIVE ROTATION & ANIMATION LOOP ---
+window.addEventListener('click', handleBurst);
+
+// --- 6. TOUCH & DRAG ROTATION LOOP ---
 let rotationX = 15;
 let rotationY = 0;
 let isDragging = false;
@@ -216,30 +210,32 @@ function stopDrag() {
   isDragging = false;
 }
 
-window.addEventListener("mousedown", (e) => startDrag(e.clientX, e.clientY));
-window.addEventListener("mousemove", (e) => moveDrag(e.clientX, e.clientY));
-window.addEventListener("mouseup", stopDrag);
+// Mouse Listeners
+window.addEventListener('mousedown', (e) => startDrag(e.clientX, e.clientY));
+window.addEventListener('mousemove', (e) => moveDrag(e.clientX, e.clientY));
+window.addEventListener('mouseup', stopDrag);
 
-window.addEventListener("touchstart", (e) => {
-  if (e.touches.length === 1)
-    startDrag(e.touches[0].clientX, e.touches[0].clientY);
-});
-window.addEventListener("touchmove", (e) => {
-  if (e.touches.length === 1)
-    moveDrag(e.touches[0].clientX, e.touches[0].clientY);
-});
-window.addEventListener("touchend", stopDrag);
+// Touch Listeners (Prevent default scrolling behavior)
+window.addEventListener('touchstart', (e) => {
+  if (e.touches.length === 1) startDrag(e.touches[0].clientX, e.touches[0].clientY);
+}, { passive: true });
+
+window.addEventListener('touchmove', (e) => {
+  if (e.touches.length === 1) moveDrag(e.touches[0].clientX, e.touches[0].clientY);
+}, { passive: true });
+
+window.addEventListener('touchend', stopDrag);
 
 function animate() {
-  drawStars(); // Redraw twinkling stars canvas
+  drawStars();
 
   pulseTime += 0.04;
   const pulseScale = 1 + Math.sin(pulseTime * 2) * 0.05;
 
   if (!isDragging) {
-    rotationY += autoRotateSpeed;
+    rotationY += autoRotateSpeed; 
   }
-
+  
   ui.style.transform = `translate(-50%, -50%) scale(${pulseScale}) rotateX(${rotationX}deg) rotateY(${rotationY}deg)`;
   requestAnimationFrame(animate);
 }
